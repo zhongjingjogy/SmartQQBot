@@ -10,13 +10,10 @@ Quick Start
 ------------
 
 1. setup.py 还没有写好，目前是通过运行main.py来启动QQ；
-
 ```
 python main.py --plugin config.json
 ```
-
 2. config.json 中设置相关的配置信息,包括保存消息的数据库的位置，插件目录以及插件目录下的插件模块；
-
 ```
 {
     "dbhandler": "sqlite:///message-record.db",
@@ -28,7 +25,6 @@ python main.py --plugin config.json
 }
 ```
 3. 插件模块目前只支持导入模块中与模块名相同的函数,如下例plugindemo.py中plugindemo函数会被导入。
-
 ```
 #coding: utf-8
 from random import randint
@@ -39,7 +35,6 @@ from smartqq import (
     on_group_message,
     on_private_message
 )
-
 @on_private_message
 def plugindemo(msg, bot, handler):
     # print __file__
@@ -57,7 +52,6 @@ def plugindemo(msg, bot, handler):
     # print("finish process message with %s" % "test1")
     pass
 ```
-
 
 TODO
 ----
