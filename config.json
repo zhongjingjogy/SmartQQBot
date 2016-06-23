@@ -1,0 +1,8 @@
+{
+    "dbhandler": "sqlite:///message-record.db",
+    "plugin_root": "./plugins",
+    "plugins": [
+        "pluginmanage",
+        "plugindemo"
+    ]
+}

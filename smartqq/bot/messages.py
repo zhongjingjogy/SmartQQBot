@@ -1,4 +1,5 @@
 # coding: utf-8
+import datetime
 
 PRIVATE_MSG = "message"
 GROUP_MSG = "group_message"
@@ -27,13 +28,15 @@ class QMessage(object):
         self.msg_type = value['msg_type']
         self.to_uin = value['to_uin']
         self._content = value['content']
-        self.time = value['time']
+        self._time = value['time']
         self.font = None
 
         for i in value['content']:
             if isinstance(i, list) and i[0] == "font":
                 self.font = i[1]
-
+    @property
+    def time(self):
+        return datetime.datetime.fromtimestamp(self._time)
     @property
     def content(self):
         text = ""
@@ -53,10 +56,9 @@ class QMessage(object):
         return self.poll_type
 
     def __str__(self):
-        return "<class {cls}: {content}>".format(
-            cls=self.__class__.__name__,
-            content=self.poll_type + " " + str(self._content)
-        )
+        items = ["poll_type", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
+        values = [self.poll_type, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
+        return "Message : \n\t" + "\n\t".join(["%s : %s" % (k, v) for k, v in zip(items, values)])
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -80,7 +82,12 @@ class PrivateMsg(QMessage):
         super(PrivateMsg, self).__init__(msg_dict)
         self.to_uin = msg_dict['value']['to_uin']
         self.from_uin = msg_dict['value']['from_uin']
-
+    def __str__(self):
+        items = ["poll_type", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
+        values = [self.poll_type, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
+        return "Private Message : \n\t" + "\n\t".join(["%s : %s" % (k, v) for k, v in zip(items, values)])
+    def __unicode__(self):
+        return unicode(self.__str__())
 
 class GroupMsg(QMessage):
 
@@ -89,6 +96,12 @@ class GroupMsg(QMessage):
         self.group_code = msg_dict['value']['group_code']
         self.send_uin = msg_dict['value']['send_uin']
         self.from_uin = msg_dict['value']['from_uin']
+    def __str__(self):
+        items = ["poll_type", "group_code", "send_uin", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
+        values = [self.poll_type, self.group_code, self.send_uin, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
+        return "Group Message : \n\t" + "\n\t".join(["%s : %s" % (k, v) for k, v in zip(items, values)])
+    def __unicode__(self):
+        return unicode(self.__str__())
 
 MSG_TYPE_MAP = {
     GROUP_MSG: GroupMsg,

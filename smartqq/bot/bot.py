@@ -9,10 +9,9 @@ import json
 from random import randint
 from threading import Thread
 
-from smart_qq_bot.logger import logger
-from smart_qq_bot.config import QR_CODE_PATH, SMART_QQ_REFER
-from smart_qq_bot.http_client import HttpClient
-from smart_qq_bot.messages import (
+from logger import logger
+from http_client import HttpClient
+from messages import (
     QMessage,
     GroupMsg,
     PrivateMsg,
@@ -82,8 +81,10 @@ def date_to_millis(d):
 
 
 class QQBot(object):
-    def __init__(self):
-        self.client = HttpClient()
+    def __init__(self, QR_CODE_PATH, smart_qq_refer, cookie_file):
+
+        self.smart_qq_refer = smart_qq_refer
+        self.client = HttpClient(smart_qq_refer = smart_qq_refer, cookie_file=cookie_file)
 
         # cache
         self.friend_uin_list = {}
@@ -142,7 +143,7 @@ class QQBot(object):
                     self.psessionid
                 )
             },
-            SMART_QQ_REFER
+            self.smart_qq_refer
         )
         try:
             ret = json.loads(response)
@@ -326,7 +327,7 @@ class QQBot(object):
                     }
                 )
             },
-            SMART_QQ_REFER
+            self.smart_qq_refer
         )
         logger.debug("Pooling returns response: %s" % response)
         if response == "":
@@ -376,7 +377,7 @@ class QQBot(object):
                         self.vfwebqq,
                         self.client.get_timestamp()
                     ),
-                    SMART_QQ_REFER
+                    self.smart_qq_refer
                 )
             )
             logger.debug("RESPONSE uin_to_account html:    " + str(info))
@@ -606,8 +607,7 @@ class QQBot(object):
                     self.group_id_list[str(group['gc'])] = group
                 return group_id_list
             else:
-                logger.warning("seems this account didn't join any group: {}".format(response))
-                return []
+                logger.debug("seems this account didn't join any group: {}".format(response))
         else:
             logger.warning("get_group_list code unknown: {}".format(response))
             return None
@@ -751,7 +751,7 @@ class QQBot(object):
                 ('clientid', self.client_id),
                 ('psessionid', self.psessionid)
             )
-            rsp = self.client.post(req_url, data, SMART_QQ_REFER)
+            rsp = self.client.post(req_url, data, self.smart_qq_refer)
             rsp_json = json.loads(rsp)
             if 'retcode' in rsp_json and rsp_json['retcode'] not in MESSAGE_SENT:
                 raise ValueError("RUNTIMELOG reply group chat error" + str(rsp_json['retcode']))
@@ -783,7 +783,7 @@ class QQBot(object):
                 ('clientid', self.client_id),
                 ('psessionid', self.psessionid)
             )
-            rsp = self.client.post(req_url, data, SMART_QQ_REFER)
+            rsp = self.client.post(req_url, data, self.smart_qq_refer)
             rsp_json = json.loads(rsp)
             if 'errCode' in rsp_json and rsp_json['errCode'] != 0:
                 raise ValueError("reply pmchat error" + str(rsp_json['retcode']))
