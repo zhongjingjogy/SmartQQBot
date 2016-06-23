@@ -91,7 +91,8 @@ def start_qq(
                 handler.update_handler(each, plmanager.plugins[each])
         except Exception as e:
             logger.error("Fail to update the plugins.")
-        handler.update_handlers(plmanager)
+
+        # update the activation list in the handler.
         try:
             handler.update_handlers(plmanager)
         except:
