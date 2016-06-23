@@ -2,7 +2,7 @@
 import argparse
 import json
 import os
-from smartqq import start_qq, list_messages
+from smartqq import start_qq, list_messages, create_db
 
 def load_pluginconfig(configjson):
     config = None
@@ -79,7 +79,7 @@ def main():
         }
 
     if options.list:
-        listmessages()
+        list_messages()
     elif options.create:
         create_db(configjson["dbhandler"])
     else:
