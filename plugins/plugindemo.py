@@ -1,6 +1,6 @@
+#coding=utf-8
 from random import randint
-import sys
-sys.path.append("../")
+
 from smartqq import (
     on_all_message,
     on_group_message,
@@ -14,9 +14,9 @@ def plugindemo(msg, bot, handler):
     # print("new test1.....")
     msg_id = randint(1, 10000)
     print type(msg.from_uin)
-    print("activating the test1")
+    # print("activating the test1")
     print msg
-    bot.send_friend_msg("yep, this is message from a smartqq bot, %d" % msg_id, 2895548428, msg_id)
+    # bot.send_friend_msg("yep, this is message from a smartqq bot, %d" % msg_id, 2895548428, msg_id)
     # if msg.from_uin == "3335494540":
     # bot.send_group_msg("recieved a message from group %s, the content is: %s" % (msg.from_uin, msg.content), 3335494540, msg_id)
     # print("modified test1")

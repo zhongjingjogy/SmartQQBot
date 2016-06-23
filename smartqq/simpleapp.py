@@ -91,6 +91,11 @@ def start_qq(
                 handler.update_handler(each, plmanager.plugins[each])
         except Exception as e:
             logger.error("Fail to update the plugins.")
+        handler.update_handlers(plmanager)
+        try:
+            handler.update_handlers(plmanager)
+        except:
+            logger.error("Unable to update the handlers' list")
 
 if __name__ == "__main__":
     start_qq()

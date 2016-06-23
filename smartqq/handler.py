@@ -74,8 +74,13 @@ class Handler(object):
             "del_handler": self.del_handler
         }
 
+        self.activated_list = set()
+
+    def add_to_activation(self, name):
+        self.activated_list.add(name)
+
     def list_handlers(self):
-        return self.handler_funcs.keys()
+        return self.activated_list
 
     def add_handler(self, name, handler):
         """
@@ -84,6 +89,7 @@ class Handler(object):
         The handler must be a function which handler two parameters: msg and bot.
         """
         self.handler_funcs[name] = handler
+        self.activated_list.add(name)
 
     def del_handler(self, name):
         """
@@ -92,10 +98,31 @@ class Handler(object):
         """
         if name in self.handler_funcs:
             self.handler_funcs.pop(name)
-
+        if name in self.activated_list:
+            self.activated_list.remove(name)
+        print("after delete handler")
+        print self.activated_list
     def update_handler(self, name, handler):
         self.del_handler(name)
         self.add_handler(name, handler)
+
+    def update_handlers(self, pluginmanager):
+        """
+        Update the handle functions according the activated_list.
+        The activated_list would be modified by other modules.
+        """
+        # collect the handle functions that exist in the self.handler_funcs, which would be removed.
+        s = set(self.handler_funcs.keys()).difference(self.activated_list)
+        if not s: return # the activated_list and the self.handler_funcs is the same, which require no further processing.
+        for hname in s: self.del_handler(hname)
+        # collect the handle function declared in the activated_list instead of self.handler_funcs
+        # the handle function in this set would be query from the plugin manger and reload.
+        s = set(self.activated_list).difference(self.handler_funcs.keys())
+        for hname in s:
+            if hname in pluginmanager.plugins:
+                self.add_handler(hname, pluginmanager.plugins[hname])
+        # reset the current activated_list as the self.handler_funcs's keys().
+        self.activated_list = set(self.handler_funcs.keys())
 
     def handle_msg_list(self, msg_list, bot):
         """

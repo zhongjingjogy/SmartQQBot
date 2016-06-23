@@ -83,15 +83,18 @@ def main():
     elif options.create:
         create_db(configjson["dbhandler"])
     else:
-        start_qq(
-            plugin_setting=configjson,
-            no_gui=options.no_gui,
-            new_user=options.new_user,
-            debug=options.debug,
-            dbhandler=configjson["dbhandler"],
-            cookie_file=options.cookie,
-            vpath=options.vpath
-        )
+        try:
+            start_qq(
+                plugin_setting=configjson,
+                no_gui=options.no_gui,
+                new_user=options.new_user,
+                debug=options.debug,
+                dbhandler=configjson["dbhandler"],
+                cookie_file=options.cookie,
+                vpath=options.vpath
+            )
+        except KeyboardInterrupt:
+            exit(0)
 
 if __name__ == "__main__":
     main()
