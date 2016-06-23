@@ -1,15 +1,25 @@
 #smartqqbot
 
+友情提示
+-------
+项目来至：[Yinzo/SmartQQBot](https://github.com/Yinzo/SmartQQBot),这里主要是重构了一下项目结构和插件机制，感谢该项目的作者和共享者。正在重做原项目的插件，要是能够实现到原项目的程度，会申请一下pull request到原项目中。。。
+
 Features
 --------
 
 * 插件热载入
 * orm记录聊天记录
 
+安装及使用说明
+-------
+1. 安装到系统库中，python setup.py install。
+2. 使用时，新建config.json和plugins文件夹。然后根据上面的示例配置数据库路径，插件根目录以及插件名称；在plugins中要有__init__.py文件；在plugins里面新建python文件，并在文件中编写同名的处理消息的函数。
+3. 创建记录聊天记录数据库请使用smartqq --create，该操作会读取config.json的数据设置，然后创建相应的数据库。
+
 Quick Start
 ------------
 
-1. setup.py 还没有写好，目前是通过运行main.py来启动QQ；
+1. 可以通过运行main.py来启动QQ；
     ```
     python main.py --plugin config.json
     ```
@@ -51,9 +61,13 @@ Quick Start
         # print("add modified")
         # print("finish process message with %s" % "test1")
         pass
-        ```
+    ```
 4. 和插件同名的函数需要接受三个参数，分别是msg, bot和handler。目前handler还有实质性的作用，设计用于让插件能够获取的管理模块。
 5. 发送消息的功能，请参考bot.py中的函数，主要是发送群消息和好友消息两个函数。
+
+常见问题
+-------
+* windows下PIL模块不能正在显示二维码，此时需要在启动选项中加入--no-gui来后台下载二维码。
 
 TODO
 ----
