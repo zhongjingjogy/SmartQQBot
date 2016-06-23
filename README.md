@@ -20,20 +20,20 @@ Quick Start
 ------------
 
 1. 可以通过运行main.py来启动QQ；
-    ```
-    python main.py --plugin config.json
-    ```
+```
+python main.py --plugin config.json
+```
 2. config.json 中设置相关的配置信息,包括保存消息的数据库的位置，插件目录以及插件目录下的插件模块；
-    ```
-    {
-        "dbhandler": "sqlite:///message-record.db",
-        "plugin_root": "./plugins",
-        "plugins": [
-            "pluginmanage",
-            "plugindemo"
-        ]
-    }
-    ```
+```
+{
+    "dbhandler": "sqlite:///message-record.db",
+    "plugin_root": "./plugins",
+    "plugins": [
+        "pluginmanage",
+        "plugindemo"
+    ]
+}
+```
 3. 插件模块目前只支持导入模块中与模块名相同的函数,如下例plugindemo.py中plugindemo函数会被导入。
     ```
     #coding: utf-8
