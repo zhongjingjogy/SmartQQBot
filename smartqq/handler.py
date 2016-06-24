@@ -100,8 +100,8 @@ class Handler(object):
             self.handler_funcs.pop(name)
         if name in self.activated_list:
             self.activated_list.remove(name)
-        print("after delete handler")
-        print self.activated_list
+        # print("after delete handler")
+        # print self.activated_list
     def update_handler(self, name, handler):
         self.del_handler(name)
         self.add_handler(name, handler)

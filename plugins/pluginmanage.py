@@ -7,6 +7,8 @@ from smartqq import (
     on_private_message
 )
 
+from smartqq import GroupMsg, PrivateMsg
+
 cmd_list_plugin = re.compile(r"!list_plugin")
 cmd_deactivate = re.compile(r"!deactivate \{(.*?)\}")
 cmd_activate = re.compile(r"!activate \{(.*?)\}")
@@ -16,12 +18,17 @@ def pluginmanage(msg, bot, handler):
     """
     Not implemented yet.
     """
-    admin_uin = 2711321953
+    admin_uin = 1705468594
     msg_id = randint(1, 10000)
 
     print("in plugin manage")
 
-    if msg.from_uin != admin_uin:
+    uin = 0
+    if isinstance(msg, GroupMsg):
+        uin = msg.send_uin
+    elif isinstance(msg, PrivateMsg):
+        uin = msg.from_uin
+    if uin != admin_uin:
         return
 
     # print msg

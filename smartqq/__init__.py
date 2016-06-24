@@ -6,3 +6,4 @@ from plugin_signals import (
 )
 from list_message import list_messages
 from model.create import create_db
+from bot.messages import GroupMsg, PrivateMsg
