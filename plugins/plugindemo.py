@@ -15,7 +15,7 @@ def plugindemo(msg, bot, *args, **kwargs):
     # msg_id = randint(1, 10000)
     # print type(msg.from_uin)
     # print("activating the test1")
-    # print msg
+    print msg
     # bot.send_friend_msg("yep, this is message from a smartqq bot, %d" % msg_id, 2895548428, msg_id)
     # if msg.from_uin == "3335494540":
     # bot.send_group_msg("recieved a message from group %s, the content is: %s" % (msg.from_uin, msg.content), 3335494540, msg_id)

@@ -15,13 +15,13 @@ syms = ["*", "&", "$", "@", "#", "+", "-", "!"]
 def plugin_repeat(msg, bot, *args, **kwargs):
 
     msg_id = randint(1, 10000)
-    response_list = [3931279346, 1705468594]
+    response_list = [1705468594,]
 
     # print("got from uin in repeat: %d" % msg.from_uin)
     if msg.from_uin not in response_list:
         return
 
     if isinstance(msg, GroupMsg):
-        pass# bot.send_group_msg("%s (啊刀扣篮好营 好营 好营 好营 好营 好营 好营 好营 好营)" % msg.content, msg.from_uin, msg_id)
+        bot.send_group_msg("%s (啊刀扣篮好营 好营)" % msg.content, msg.from_uin, msg_id)
     elif isinstance(msg, PrivateMsg):
         bot.send_friend_msg("%s %s" % (msg.content, "..."), msg.from_uin, msg_id)
