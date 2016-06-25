@@ -6,7 +6,7 @@ GROUP_MSG = "group_message"
 SESS_MSG = "sess_message"
 INPUT_NOTIFY_MSG = "input_notify"
 KICK_MSG = "kick_message"
-
+DISCU_MSG = "discu_message"
 # Msg type in message content
 OFF_PIC_PART = "offpic"
 C_FACE_PART = "cface"
@@ -103,12 +103,18 @@ class GroupMsg(QMessage):
     def __unicode__(self):
         return unicode(self.__str__())
 
+class DiscuMsg(QMessage):
+
+    def __init__(self, msg_dict):
+        super(DiscuMsg, self).__init__(msg_dict)
+
 MSG_TYPE_MAP = {
     GROUP_MSG: GroupMsg,
     INPUT_NOTIFY_MSG: QMessage,
     KICK_MSG: QMessage,
     SESS_MSG: SessMsg,
     PRIVATE_MSG: PrivateMsg,
+    DISCU_MSG: DiscuMsg
 }
 
 

@@ -27,12 +27,14 @@ class PluginManager(object):
         """
         Load a plugin with the module name.
         """
+        plugin_name = str(plugin_name)
         if not os.path.isfile(self.prefix + "/" + plugin_name + ".py"):
             return
         try:
             module = __import__(plugin_name)
             self.plugins[plugin_name] = getattr(module, plugin_name)
             self.check_plugin(plugin_name)
+            return True
         except ImportError:
             print("import error, fail to import %s" % plugin)
 
@@ -40,6 +42,7 @@ class PluginManager(object):
         """
         Remove a plugin from the plugin list.
         """
+        plugin_name = str(plugin_name)
         if plugin_name in self.plugins:
             self.plugins.pop(plugin_name)
 
@@ -62,6 +65,7 @@ class PluginManager(object):
         """
         Check if source file of a plugin is changed.
         """
+        mod_name = str(mod_name)
         # call the module from the sys modules
         mod = sys.modules[mod_name]
         # make sure that the module exists.
@@ -70,9 +74,12 @@ class PluginManager(object):
         # make sure the module is reachable.
         try:
             # retrieve the modified time of the source file.
-            mtime = os.stat(mod.__file__).st_mtime
+            # fix: sometimes the pyc file would be import.
+            filename, file_extension = os.path.splitext(mod.__file__)
+            mtime = os.stat(filename + ".py").st_mtime
         except (OSError, IOError):
             return
+        # print("%s, file: %s, current: %s, recorded: %s" % (mod_name, mod.__file__, mtime, self.mtimes.get(mod_name, "null")))
         # add modified time to the records of the modified time, if it never exists.
         if mod_name not in self.mtimes:
             self.mtimes[mod_name] = mtime
@@ -80,7 +87,8 @@ class PluginManager(object):
         # if the current modified time is the latest.
         elif self.mtimes[mod_name] < mtime:
             try:
-                reload(mod)
+                del sys.modules[mod_name]
+                __import__(mod_name)
                 self.mtimes[mod_name] = mtime
                 return True
             except ImportError:

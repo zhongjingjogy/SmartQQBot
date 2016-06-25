@@ -49,15 +49,17 @@ def start_qq(
     plmanager = PluginManager(plugin_setting["plugin_root"])
     # load the plugins
     for plugin_name in plugin_setting["plugins"]:
+        # plmanager.add_plugin(plugin_name)
         try:
             plmanager.add_plugin(plugin_name)
-        except Exception:
+        except Exception, e:
+            print(e)
             logger.error("Failed to load plugin: %s" % plugin_name)
 
     # register the plugins to the message handlers
     for (name, plugin) in plmanager.plugins.items():
         handler.add_handler(name, plugin)
-
+    logger.info("plugin available: %s" % plmanager.plugins.keys())
     # main loop, query new messages and handle them.
     while True:
         try:
@@ -69,11 +71,10 @@ def start_qq(
                     [mk_msg(msg) for msg in msg_list], bot
                 )
             if msg_list:
-                logging.debug("recording messages...")
+                # logging.debug("recording messages...")
                 for each in msg_list:
                     dbhandler.insert_message(mk_msg(each))
-
-            logger.info("checking messages...")
+            # logger.info("checking messages...")
         except ServerResponseEmpty:
             continue
         except (socket.timeout, IOError):
@@ -85,18 +86,20 @@ def start_qq(
         try:
             tobeupdated = plmanager.update_plugin()
             if tobeupdated:
-                logger.info("changes are detected...try to update...")
+                logger.info("changes are detected...try to update: [%s]" % ",".join(tobeupdated))
             for each in tobeupdated:
                 logger.info("update plugin: %s" % each)
                 handler.update_handler(each, plmanager.plugins[each])
-        except Exception as e:
+        except Exception, e:
             logger.error("Fail to update the plugins.")
 
         # update the activation list in the handler.
         try:
             handler.update_handlers(plmanager)
-        except:
-            logger.error("Unable to update the handlers' list")
+            # logger.info("update handlers....")
+        except Exception, e:
+            print(e)
+            logger.info("Unable to update the handlers' list")
 
 if __name__ == "__main__":
     start_qq()

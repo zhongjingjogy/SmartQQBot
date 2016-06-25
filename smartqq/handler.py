@@ -88,6 +88,7 @@ class Handler(object):
         :type handler: callable
         The handler must be a function which handler two parameters: msg and bot.
         """
+        name = str(name)
         self.handler_funcs[name] = handler
         self.activated_list.add(name)
 
@@ -96,6 +97,7 @@ class Handler(object):
         :type name: str
         Remove a certain handle function, if it exists.
         """
+        name = str(name)
         if name in self.handler_funcs:
             self.handler_funcs.pop(name)
         if name in self.activated_list:
@@ -103,6 +105,7 @@ class Handler(object):
         # print("after delete handler")
         # print self.activated_list
     def update_handler(self, name, handler):
+        name = str(name)
         self.del_handler(name)
         self.add_handler(name, handler)
 
@@ -112,6 +115,7 @@ class Handler(object):
         The activated_list would be modified by other modules.
         """
         # collect the handle functions that exist in the self.handler_funcs, which would be removed.
+        self.activated_list = set([str(each) for each in self.activated_list])
         s = set(self.handler_funcs.keys()).difference(self.activated_list)
         if not s: return # the activated_list and the self.handler_funcs is the same, which require no further processing.
         for hname in s: self.del_handler(hname)
@@ -121,6 +125,9 @@ class Handler(object):
         for hname in s:
             if hname in pluginmanager.plugins:
                 self.add_handler(hname, pluginmanager.plugins[hname])
+            else:
+                flag = pluginmanager.add_plugin(hname)
+                if flag: self.add_handler(hname, pluginmanager.plugins[hname])
         # reset the current activated_list as the self.handler_funcs's keys().
         self.activated_list = set(self.handler_funcs.keys())
 
