@@ -21,7 +21,7 @@ def pluginmanage(msg, bot, handler):
     admin_uin = 1705468594
     msg_id = randint(1, 10000)
 
-    print("in plugin manage")
+    print("in plugin manage...")
 
     uin = 0
     if isinstance(msg, GroupMsg):

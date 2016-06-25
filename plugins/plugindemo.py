@@ -4,10 +4,11 @@ from random import randint
 from smartqq import (
     on_all_message,
     on_group_message,
-    on_private_message
+    on_private_message,
+    on_from_uin_message
 )
 
-@on_all_message
+@on_from_uin_message(100)
 def plugindemo(msg, bot, handler):
     # print __file__
     # print("process message with %s" % "test1")
