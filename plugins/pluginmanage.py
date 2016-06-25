@@ -13,15 +13,17 @@ cmd_list_plugin = re.compile(r"!list_plugin")
 cmd_deactivate = re.compile(r"!deactivate \{(.*?)\}")
 cmd_activate = re.compile(r"!activate \{(.*?)\}")
 
-@on_private_message
-def pluginmanage(msg, bot, handler):
+def pluginmanage(msg, bot, *args, **kwargs):
     """
     Not implemented yet.
     """
+    handler = kwargs["handler"]
+
     admin_uin = 1705468594
+    print("admin_uin: %d" % admin_uin)
     msg_id = randint(1, 10000)
 
-    print("in plugin manage...")
+    # print("in plugin manage...")
 
     uin = 0
     if isinstance(msg, GroupMsg):
