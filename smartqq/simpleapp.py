@@ -62,6 +62,25 @@ def start_qq(
     logger.info("plugin available: %s" % plmanager.plugins.keys())
     # main loop, query new messages and handle them.
     while True:
+        # query the plugins to be updated.
+        try:
+            tobeupdated = plmanager.update_plugin()
+            if tobeupdated:
+                logger.info("changes are detected...try to update: [%s]" % ",".join(tobeupdated))
+            for each in tobeupdated:
+                logger.info("update plugin: %s" % each)
+                handler.update_handler(each, plmanager.plugins[each])
+        except Exception, e:
+            logger.error("Fail to update the plugins.")
+
+        # update the activation list in the handler.
+        try:
+            handler.update_handlers(plmanager)
+            # logger.info("update handlers....")
+        except Exception, e:
+            print(e)
+            logger.info("Unable to update the handlers' list")
+
         try:
             # query new messages from the smart qq bot.
             msg_list = bot.check_msg()
@@ -81,25 +100,6 @@ def start_qq(
             logger.warning("Message pooling timeout, retrying...")
         except Exception:
             logger.exception("Exception occurs when checking msg.")
-
-        # query the plugins to be updated.
-        try:
-            tobeupdated = plmanager.update_plugin()
-            if tobeupdated:
-                logger.info("changes are detected...try to update: [%s]" % ",".join(tobeupdated))
-            for each in tobeupdated:
-                logger.info("update plugin: %s" % each)
-                handler.update_handler(each, plmanager.plugins[each])
-        except Exception, e:
-            logger.error("Fail to update the plugins.")
-
-        # update the activation list in the handler.
-        try:
-            handler.update_handlers(plmanager)
-            # logger.info("update handlers....")
-        except Exception, e:
-            print(e)
-            logger.info("Unable to update the handlers' list")
 
 if __name__ == "__main__":
     start_qq()
