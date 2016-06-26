@@ -2,6 +2,7 @@
 from collections import defaultdict, namedtuple
 from Queue import Queue
 from threading import Thread
+import types
 
 from bot.bot import QQBot
 from bot.logger import logger
@@ -17,7 +18,7 @@ MSG_TYPES = MSG_TYPE_MAP.keys()
 MSG_TYPES.append(RAW_TYPE)
 
 Handler = namedtuple("Handler", ("func", "name"))
-Task = namedtuple("Task", ("func", "name", "kwargs"))
+Task = namedtuple("Task", ("func", "name", "cls", "kwargs"))
 
 class Worker(Thread):
 
@@ -42,13 +43,23 @@ class Worker(Thread):
             if self._stopped:
                 break
             task = self.queue.get()
-            try:
-                task.func(**task.kwargs)
-            except Exception:
-                logger.exception(
-                    "Error occurs when running task from plugin [%s]."
-                    % task.name
-                )
+            if task.func:
+                try:
+                    task.func(**task.kwargs)
+                except Exception:
+                    logger.exception(
+                        "Error occurs when running task from plugin [%s]."
+                        % task.name
+                    )
+            else:
+                try:
+                    task.cls.handle_msg(**task.kwargs)
+                except Exception:
+                    logger.exception(
+                        "Error occurs when running task from plugin [%s]."
+                        % task.name
+                    )
+
         self._stop_done = True
 
     def stop(self):
@@ -89,6 +100,8 @@ class Handler(object):
         The handler must be a function which handler two parameters: msg and bot.
         """
         name = str(name)
+        if isinstance(handler, type):
+            handler = handler()
         self.handler_funcs[name] = handler
         self.activated_list.add(name)
 
@@ -142,11 +155,24 @@ class Handler(object):
         """
         :type msg: smart_qq_bot.messages.QMessage
         """
-        for (name, hanlder) in self.handler_funcs.items():
-            self.handler_queue.put(
-                Task(
-                    func=hanlder,
-                    name=name,
-                    kwargs={"msg": msg, "bot": bot, "handler": self}
+        for (name, handler) in self.handler_funcs.items():
+            if isinstance(handler, types.FunctionType):
+                self.handler_queue.put(
+                    Task(
+                        func=handler,
+                        name=name,
+                        cls=None,
+                        kwargs={"msg": msg, "bot": bot, "handler": self}
+                    )
                 )
-            )
+            else:
+                print("Got an class: %s" % name)
+                print("handler type: %s" % type(handler))
+                self.handler_queue.put(
+                    Task(
+                        func=None,
+                        name=name,
+                        cls=handler,
+                        kwargs={"msg": msg, "bot": bot, "handler": self}
+                    )
+                )
