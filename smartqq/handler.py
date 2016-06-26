@@ -115,8 +115,6 @@ class Handler(object):
             self.handler_funcs.pop(name)
         if name in self.activated_list:
             self.activated_list.remove(name)
-        # print("after delete handler")
-        # print self.activated_list
     def update_handler(self, name, handler):
         name = str(name)
         self.del_handler(name)
@@ -166,8 +164,6 @@ class Handler(object):
                     )
                 )
             else:
-                print("Got an class: %s" % name)
-                print("handler type: %s" % type(handler))
                 self.handler_queue.put(
                     Task(
                         func=None,
