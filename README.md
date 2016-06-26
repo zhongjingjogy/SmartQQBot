@@ -60,8 +60,8 @@ python main.py --plugin config.json --no-gui
 自定义插件说明
 -------------
 需要修改两个地方：
-    * 在config.json的plugins中注册插件名称。
-    * 在plugins文件夹中新建与插件同名的python文件。
+* 在config.json的plugins中注册插件名称。
+* 在plugins文件夹中新建与插件同名的python文件。
 以下是一个简单复读插件的实现过程，插件名为plugin_repeat。
 * 创建config.json,注册插件；
 ```
