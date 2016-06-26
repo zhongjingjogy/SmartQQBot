@@ -100,6 +100,33 @@ def plugindemo(msg, bot, *args, **kwargs):
         bot.send_friend_msg("%s ..." % msg.content, msg.from_uin, msg_id)
 ```
 
+定义插件类处理消息
+-----------------
+定义方式与函数定义方式类似.
+* 类名必须与插件名一致
+* 必须包含handle_msg这个类成员函数,并且定义为
+```
+#coding=utf-8
+from random import randint
+from baidutrans import BaiduFanyi
+import json
+from smartqq import (
+    on_all_message,
+    on_group_message,
+    on_private_message,
+    on_from_uin_message
+)
+from smartqq import GroupMsg, PrivateMsg
+
+class plugin_classdemo(object):
+    def __init__(self):
+        pass
+    def __setup__(self, *arg, **kwargs):
+        pass
+    def handle_msg(self, msg, bot, *arg, **kwargs):
+        print("in plugin_classdemo activated...")
+```
+
 插件消息过滤
 --------
 在插件中可以自定义比较复杂的过滤规则，但是一般的过滤基本是根据消息类型和发送者等信息来进行。在smartqq中提供了一些预定义的修饰函数来进行简单的过滤。
