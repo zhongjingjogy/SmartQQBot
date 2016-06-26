@@ -8,18 +8,22 @@ Features
 --------
 
 * 插件热载入
+* 将类作为插件导入
 * orm记录聊天记录
 * 更多特性请走上访传送门了解原来项目。
 
 安装及使用
 -------
-1. 安装到系统库中，python setup.py install。
-2. 使用时，新建config.json和plugins文件夹。
+* 安装到系统库(生产环境慎用,建议virtualenv创建相应环境)
+```
+python setup.py install
+```
+* 使用时，新建config.json和plugins文件夹。
     * 在config.json中配置数据库路径，插件根目录以及插件名称；
     * 在plugins中放置作为插件脚本的python文件,记得添加\_\_init\_\_.py文件；
     * 插件脚本中的处理函数需要和脚本名称同名,也要和config.json中声明的plugins相一致.
-3. 第一次启动时需要创建记录聊天记录数据库。命令行执行smartqq --create，该操作会读取config.json的数据设置，然后创建相应的数据库。
-4. 聊天记录查看请命令行执行smartqq --list.
+* 第一次启动时需要创建记录聊天记录数据库。命令行执行smartqq --create，该操作会读取config.json的数据设置，然后创建相应的数据库。
+* 聊天记录查看请命令行执行smartqq --list.
 
 使用说明
 ------------
@@ -105,6 +109,9 @@ def plugindemo(msg, bot, *args, **kwargs):
 定义方式与函数定义方式类似.
 * 类名必须与插件名一致
 * 必须包含handle_msg这个类成员函数,并且定义为
+类插件的作用
+* 可以记录消息,而不用依赖与全局变量;
+* 可以自定义复杂行为.
 ```
 #coding=utf-8
 from random import randint
@@ -140,4 +147,3 @@ class plugin_classdemo(object):
 
 TODO
 ----
-* 设计插件的基类，实现从插件模块文件中导入类并产生类对象来处理消息。
