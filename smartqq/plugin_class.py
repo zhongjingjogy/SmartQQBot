@@ -25,9 +25,9 @@ class ClassPluginBase(object):
     def is_admin(self, uin):
         return uin == self.admin
     def is_onmsgtype(self, msgtype):
-        return msgtype == self.on_msg_type
+        return msgtype in self.on_msg_type
     def is_onfromuin(self, from_uin):
-        return from_uin == self.on_from_uin
+        return from_uin in self.on_from_uin
     def is_passwd(self, passwd):
         return passwd == self.passwd
     def handle_msg(self, msg, bot, *args, **kwargs):
