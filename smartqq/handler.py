@@ -53,7 +53,7 @@ class Worker(Thread):
                     )
             else:
                 try:
-                    task.cls.handle_msg(**task.kwargs)
+                    task.func(**task.kwargs)
                 except Exception:
                     logger.exception(
                         "Error occurs when running task from plugin [%s]."
@@ -166,7 +166,7 @@ class Handler(object):
             else:
                 self.handler_queue.put(
                     Task(
-                        func=None,
+                        func=handler.handle_msg,
                         name=name,
                         cls=handler,
                         kwargs={"msg": msg, "bot": bot, "handler": self}

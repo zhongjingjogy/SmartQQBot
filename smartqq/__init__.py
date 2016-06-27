@@ -10,3 +10,12 @@ from list_message import list_messages
 from model.create import create_db
 from bot.messages import GroupMsg, PrivateMsg
 from plugin_class import ClassPluginBase
+
+from bot.bot import QQBot
+from bot.logger import logger
+from bot.messages import mk_msg
+from bot.exceptions import ServerResponseEmpty
+from handler import Handler
+from plugin_manager import PluginManager
+from model.dbhandler import DBHandler
+from plugin_timer import PluginTimer
