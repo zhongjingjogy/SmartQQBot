@@ -12,6 +12,7 @@ from bot.exceptions import ServerResponseEmpty
 from handler import Handler
 from plugin_manager import PluginManager
 from model.dbhandler import DBHandler
+from plugin_timer import PluginTimer
 
 def start_qq(
         no_gui=False, new_user=False, debug=False,
@@ -23,6 +24,9 @@ def start_qq(
             "plugins": [
                 "pluginmanage",
                 "test1"
+            ],
+            "timers": [
+                "timer_weather"
             ]
         },
         dbhandler='sqlite:///message-record.db',
@@ -47,6 +51,7 @@ def start_qq(
     dbhandler = DBHandler()
     # initialize the plugin manager
     plmanager = PluginManager(plugin_setting["plugin_root"])
+    timermanager = PluginManager(plugin_setting["plugin_root"])
     # load the plugins
     for plugin_name in plugin_setting["plugins"]:
         # plmanager.add_plugin(plugin_name)
@@ -55,10 +60,22 @@ def start_qq(
         except Exception, e:
             print(e)
             logger.error("Failed to load plugin: %s" % plugin_name)
-
+    for timer_name in plugin_setting["timers"]:
+        try:
+            timermanager.add_plugin(timer_name)
+        except Exception, e:
+            print(e)
+            logger.error("Failed to load plugin: %s" % plugin_name)
     # register the plugins to the message handlers
     for (name, plugin) in plmanager.plugins.items():
         handler.add_handler(name, plugin)
+
+    timers = {}
+    for (name, plugin) in timermanager.plugins.items():
+        t = PluginTimer(plugin, args=(bot, ), sleep=2)
+        t.start()
+        timers[name] = t
+
     logger.info("plugin available: %s" % plmanager.plugins.keys())
     # main loop, query new messages and handle them.
     while True:
@@ -70,6 +87,18 @@ def start_qq(
             for each in tobeupdated:
                 logger.info("update plugin: %s" % each)
                 handler.update_handler(each, plmanager.plugins[each])
+        except Exception, e:
+            logger.error("Fail to update the plugins.")
+
+        try:
+            tobeupdated = timermanager.update_plugin()
+            if tobeupdated:
+                logger.info("changes are detected in timers...try to update: [%s]" % ",".join(tobeupdated))
+            for each in tobeupdated:
+                logger.info("update plugin: %s" % each)
+                timers[each].stop()
+                timers[each] = PluginTimer(timermanager.plugins[each], args=(bot, ), sleep=10)
+                timers[each].start()
         except Exception, e:
             logger.error("Fail to update the plugins.")
 
