@@ -10,6 +10,7 @@ Features
 * 插件热载入
 * 将类作为插件导入
 * orm记录聊天记录
+* 计时功能
 * 更多特性请走上访传送门了解原来项目。
 
 安装及使用
@@ -43,6 +44,9 @@ python main.py --plugin config.json --no-gui
         "pluginmanage",
         "plugindemo",
         "plugin_repeat"
+    ],
+    "timers": [
+        "timer_weather"    
     ]
 }
 ```
@@ -103,6 +107,13 @@ def plugindemo(msg, bot, *args, **kwargs):
     elif isinstance(msg, PrivateMsg):
         bot.send_friend_msg("%s ..." % msg.content, msg.from_uin, msg_id)
 ```
+
+定时插件说明
+------------
+插件定义方式与一般插件类似,声明插件请在config.json中的timers字段增加.
+* 目前只运行用户定义函数,即在plugin_root对应的文件夹中定义插件,并在其中定义要定时执行的函数.
+* 默认触发时间为2秒,如果需要更改,请在执行函数中添加返回值(单位秒).
+* 第一次触发为导入计时插件两秒后.
 
 定义插件类处理消息
 -----------------
