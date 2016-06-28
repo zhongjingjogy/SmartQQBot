@@ -60,7 +60,8 @@ class DBHandler(object):
             to_uin = msg.to_uin,
             send_uin = msg.send_uin,
             content = msg.content,
-            recievedtime = msg.time
+            recievedtime = msg.time,
+            groupname = msg.name
         )
         try:
             self.session.add(gmsg)
