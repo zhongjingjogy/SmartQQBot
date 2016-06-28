@@ -10,6 +10,7 @@ from bot.logger import logger
 from bot.messages import mk_msg
 from bot.exceptions import ServerResponseEmpty
 from handler import Handler
+from superhandler import SuperHandler
 from plugin_manager import PluginManager
 from model.dbhandler import DBHandler
 from plugin_timer import PluginTimer
@@ -47,8 +48,11 @@ def start_qq(
     bot.login(no_gui)
 
     # initialze the handler
-    handler = Handler(5)
-    dbhandler = DBHandler()
+    handler = SuperHandler(dbhandle=dbhandler, workers=5)
+    handler.update_group_list(bot)
+    logger.info("Update group list...")
+
+    # dbhandler = DBHandler()
     # initialize the plugin manager
     plmanager = PluginManager(plugin_setting["plugin_root"])
     timermanager = PluginManager(plugin_setting["plugin_root"])
@@ -114,14 +118,15 @@ def start_qq(
             # query new messages from the smart qq bot.
             msg_list = bot.check_msg()
 
+            updated_msg = []
             if msg_list is not None:
-                handler.handle_msg_list(
+                updated_msg = handler.handle_msg_list(
                     [mk_msg(msg) for msg in msg_list], bot
                 )
-            if msg_list:
-                # logging.debug("recording messages...")
-                for each in msg_list:
-                    dbhandler.insert_message(mk_msg(each))
+            # if msg_list:
+            #     # logging.debug("recording messages...")
+            #     for each in updated_msg:
+            #         dbhandler.insert_message(mk_msg(each))
             # logger.info("checking messages...")
         except ServerResponseEmpty:
             continue
