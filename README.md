@@ -24,7 +24,7 @@ python setup.py install
     * 在plugins中放置作为插件脚本的python文件,记得添加\_\_init\_\_.py文件；
     * 插件脚本中的处理函数需要和脚本名称同名,也要和config.json中声明的plugins相一致.
 * 第一次启动时需要创建记录聊天记录数据库。命令行执行smartqq --create，该操作会读取config.json的数据设置，然后创建相应的数据库。
-* 聊天记录查看请命令行执行smartqq --list.
+* 聊天记录查看请命令行执行smartqq --list.(发现一个管理sqlite数据库的好软件,http://sqlitebrowser.org/).
 
 使用说明
 ------------
