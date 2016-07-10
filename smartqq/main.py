@@ -2,7 +2,19 @@
 import argparse
 import json
 import os
-from smartqq import start_qq, list_messages, create_db
+from smartqq import start_qq, list_messages, create_db, logger
+import logging
+
+def init_logging(logger, log_level=logging.DEBUG):
+    assert isinstance(logger, logging.Logger)
+
+    log_format = '[%(levelname)s] %(asctime)s  %(filename)s line %(lineno)d: %(message)s'
+    date_fmt = '%a, %d %b %Y %H:%M:%S'
+    formatter = logging.Formatter(log_format, date_fmt)
+    ch = logging.StreamHandler()
+    ch.setLevel(log_level)
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 def load_pluginconfig(configjson):
     config = None
@@ -77,6 +89,8 @@ def main():
                 "plugindemo"
             ]
         }
+    if options.debug:
+        init_logging(logger)
 
     if options.list:
         list_messages()
