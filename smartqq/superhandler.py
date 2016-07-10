@@ -47,7 +47,7 @@ class SuperHandler(Handler):
         return None
     def update_message(self, msg, bot):
         if isinstance(msg, GroupMsg):
-            flag = False#self.get_groupname_with_gid(msg.from_uin)
+            flag = self.get_groupname_with_gid(msg.from_uin)
             res = False#self.get_friendname_with_uid(msg.send_uin)
             if flag:
                 msg.name = flag
@@ -82,6 +82,7 @@ class SuperHandler(Handler):
         else:
             return msg
     def update_group_list(self, bot):
+        return
         groupinfos = bot.get_group_list_with_group_code()
         self.group_list = {}
         if not groupinfos: return
