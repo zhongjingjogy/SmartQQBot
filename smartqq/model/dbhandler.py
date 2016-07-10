@@ -1,7 +1,8 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relation, sessionmaker
-from model import Base, PrivateMessage, GroupMessage
+from model import Base, PrivateMessage, GroupMessage, Friend
 import sys
+import datetime
 sys.path.append("../")
 from smartqq.bot.messages import PrivateMsg, GroupMsg
 
@@ -24,6 +25,37 @@ class DBHandler(object):
     def create_session(self):
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
+
+    def insert_friend(self, friend_dict):
+        birthday = friend_dict[u"birthday"]
+        print(type(birthday))
+        print("birthday: %s" % birthday)
+        friend_dict[u"birthday"] = datetime.datetime(birthday[u"year"], birthday[u"month"], birthday[u"day"])
+        friend_dict[u"nickname"] = friend_dict[u"nick"]
+
+        friend = Friend(
+            account = friend_dict.get(u"account", ""),
+            nickname = friend_dict.get(u"nickname", ""),
+            birthday = friend_dict.get(u"birthday", ""),
+            gender = friend_dict.get(u"gender", ""),
+            province = friend_dict.get(u"province", ""),
+            city = friend_dict.get(u"city", ""),
+            uin = friend_dict.get(u"uin", ""),
+        )
+
+        n = self.session.query(Friend).filter(
+            Friend.account == friend_dict[u"account"]
+        ).count()
+        if n < 1:
+            try:
+                self.session.add(friend)
+                self.session.commit()
+            except Exception, e:
+                print(e)
+                print("fail to add a friend")
+                self.session.rollback()
+        else:
+            pass
 
     def insert_message(self, msg):
         if isinstance(msg, PrivateMsg):
