@@ -570,6 +570,7 @@ class QQBot(object):
             raise TypeError('get_online_buddies2 result error')
         for group in response['result']['gnamelist']:
             self.group_code_list[str(group['gid'])] = group
+            self.group_code_list[str(group['code'])] = group
 
         return response['result']['gnamelist']
 
@@ -608,6 +609,7 @@ class QQBot(object):
                 return group_id_list
             else:
                 logger.debug("seems this account didn't join any group: {}".format(response))
+                return []
         else:
             logger.warning("get_group_list code unknown: {}".format(response))
             return None
@@ -644,21 +646,21 @@ class QQBot(object):
             if group_code:
                 assert isinstance(group_code, str), "group_code类型错误, 应该为str"
                 t_group_code = self.get_true_group_code(group_code)
-                if t_group_code not in self.group_code_list:
+                if t_group_code not in self.group_code_list and group_code not in self.group_code_list:
                     self.get_group_list_with_group_code()
-                group_code_info = self.group_code_list.get(t_group_code)
+                group_code_info = self.group_code_list.get(t_group_code) or self.group_code_list.get(group_code)
 
                 group_id_list = self.get_group_list_with_group_id()
                 result = {
-                    'name':         group_code_info['name'],
-                    'id':           "",
-                    'group_code':   group_code_info['code']
+                    'name':         group_code_info['name'] or "",
+                    'id':           0,
+                    'group_code':   group_code_info['code'] or 0
                 }
                 group_id_list = filter(lambda x:x['gn'] == group_code_info['name'], group_id_list)
                 if len(group_id_list) == 1:
                     result['id'] = group_id_list[0].get('gc')
                     return result
-                else:
+                elif len(group_id_list) > 1:
                     raise KeyError('QQ{qq}的群列表中含有{count}个同名群:"{group_name}"'.format(
                         qq=self.account,
                         count=len(group_id_list),
@@ -671,8 +673,8 @@ class QQBot(object):
                 group_id_info = self.group_id_list.get(group_id)
                 group_code_list = self.get_group_list_with_group_code()
                 result = {
-                    'name': group_id_info['gn'],
-                    'id': group_id_info['gc'],
+                    'name': group_id_info['gn'] or "",
+                    'id': group_id_info['gc'] or 0,
                     'group_code': 0
                 }
                 group_code_list = filter(lambda x:x['name'] == group_id_info['gn'], group_code_list)
@@ -698,16 +700,16 @@ class QQBot(object):
         if group_code == 0:
             return
         try:
-            url = "http://s.web2.qq.com/api/get_group_member_info_ext2?gcode=%s&vfwebqq=%s&t=%s" % (
+            url = "http://s.web2.qq.com/api/get_group_info_ext2?gcode=%s&vfwebqq=%s&t=%s" % (
                 group_code, self.vfwebqq, int(time.time() * 100))
             response = self.client.get(url)
             rsp_json = json.loads(response)
-            logger.debug("get_group_member_info_ext2 info response: {}".format(rsp_json))
+            logger.debug("get_group_member_info_list info response: {}".format(rsp_json))
             retcode = rsp_json["retcode"]
             if retcode == 0:
                 result = rsp_json["result"]
             elif retcode == 6:
-                logger.debug("get_group_member_info_ext2 retcode is 6, trying to get true code.")
+                logger.debug("get_group_member_info_list retcode is 6, trying to get true code.")
                 result = self.get_group_member_info_list(self.get_true_group_code(group_code))
             else:
                 logger.warning("group_code error.")
@@ -715,7 +717,7 @@ class QQBot(object):
             self.group_member_info[str(group_code)] = result    # 缓存群成员信息, 此处会把真假group_code都加入cache
             return result
         except Exception as ex:
-            logger.warning("RUNTIMELOG get_group_member_info_ext2. Error: " + str(ex))
+            logger.warning("RUNTIMELOG get_group_member_info_list. Error: " + str(ex))
             return
 
     def get_group_member_info(self, group_code, uin):

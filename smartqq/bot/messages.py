@@ -82,9 +82,11 @@ class PrivateMsg(QMessage):
         super(PrivateMsg, self).__init__(msg_dict)
         self.to_uin = msg_dict['value']['to_uin']
         self.from_uin = msg_dict['value']['from_uin']
+        self.nickname = ""
+        self.account = ""
     def __str__(self):
-        items = ["poll_type", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
-        values = [self.poll_type, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
+        items = ["nickname", "account", "poll_type", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
+        values = [self.nickname, self.account, self.poll_type, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
         return "Private Message : \n\t" + "\n\t".join(["%s : %s" % (k, v) for k, v in zip(items, values)])
     def __unicode__(self):
         return unicode(self.__str__())
@@ -97,9 +99,11 @@ class GroupMsg(QMessage):
         self.send_uin = msg_dict['value']['send_uin']
         self.from_uin = msg_dict['value']['from_uin']
         self.name = ""
+        self.nickname = ""
+        self.send_account = ""
     def __str__(self):
-        items = ["name", "poll_type", "group_code", "send_uin", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
-        values = [self.name, self.poll_type, self.group_code, self.send_uin, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
+        items = ["name", "poll_type", "group_code", "nickname", "send_account", "send_uin", "from_uin", "msg_id", "msg_type", "to_uin", "content", "_content", "time", "font"]
+        values = [self.name, self.poll_type, self.group_code, self.nickname, self.send_account, self.send_uin, self.from_uin, self.msg_id, self.msg_type, self.to_uin, self.content, self._content, self.time, self.font]
         return "Group Message : \n\t" + "\n\t".join(["%s : %s" % (k, v) for k, v in zip(items, values)])
     def __unicode__(self):
         return unicode(self.__str__())
